@@ -1,0 +1,12 @@
+langchain
+langchain_core
+langchain_openai
+openai
+python-dotenv
+langchain_community
+langserve
+langchain-google-genai
+google-generativeai
+langchain-huggingface
+transformers
+huggingface-hub
