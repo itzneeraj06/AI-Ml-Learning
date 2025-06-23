@@ -12,6 +12,8 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGener
 from langchain_community.vectorstores.faiss import FAISS
 from langchain.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
+from langchain.memory import ConversationBufferMemory
+from langchain.chains.conversational_retrieval.base import ConversationalRetrievalChain
 
 # Load environment variables
 load_dotenv()
@@ -166,11 +168,17 @@ prompt = PromptTemplate(
 
 today = str(date.today())
 
-chain = RetrievalQA.from_chain_type(
+memory = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True
+)
+
+chain = ConversationalRetrievalChain.from_llm(
     llm=model,
     retriever=retriever,
-    return_source_documents=True,
-    chain_type_kwargs={"prompt": prompt.partial(today_date=today)}
+    memory=memory,
+    # return_source_documents=True,
+    combine_docs_chain_kwargs={"prompt": prompt.partial(today_date=today)}
 )
 print("✅ RetrievalQA Chain is ready.")
 
@@ -180,5 +188,5 @@ if __name__ == "__main__":
         query = input("You: ")
         if query.lower() == "exit":
             break
-        result = chain.invoke({"query": query})
-        print("Bot:", result['result'])
+        result = chain.invoke({"question": query})
+        print("Bot:", result["answer"])
