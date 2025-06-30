@@ -9,12 +9,19 @@ def prepare_documents(mongo_docs):
     langchain_docs = []
 
     for idx, doc in enumerate(mongo_docs):
-        metadata = {"collection": doc["_collection"]}
-        
+        # metadata = {"collection": doc["_collection"]}
+        try:
+            metadata = {"collection": doc["_collection"]}
+        except (TypeError, KeyError):
+            metadata = {"collection": None}
+
         if idx < len(stored_paragraphs):
             paragraph = stored_paragraphs[idx]
         else:
-            content = "\n".join([f"{k}: {v}" for k, v in doc.items() if k not in ["_id", "_collection"]])
+            if isinstance(doc, dict):
+                content = "\n".join([f"{k}: {v}" for k, v in doc.items() if k not in ["_id", "_collection"]])
+            else:
+                content=f'{doc}'
             # paragraph = convert_to_paragraph(content)
             paragraph = content
 
