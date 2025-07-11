@@ -8,7 +8,7 @@ def get_chatbot_chain(retriever):
         memory_key="chat_history",
         return_messages=True
     )
-    model = ChatGoogleGenerativeAI(model='gemini-2.0-flash')
+    model = ChatGoogleGenerativeAI(model='gemini-2.0-flash',temperature=0)
 
     chain = ConversationalRetrievalChain.from_llm(
         llm=model,
